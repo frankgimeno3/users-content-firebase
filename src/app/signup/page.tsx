@@ -12,7 +12,10 @@ export default function Signup() {
   const [password, setPassword] = useState('');
   const [passwordAgain, setPasswordAgain] = useState('');
   const [type, setType] = useState('');
-
+  const [isAccepted, setIsAccepted] = useState(false);
+  
+  const router = useRouter();
+ 
   const handleUserTypeChange = (e: any) => {
     setType(e.target.value);
   };
@@ -27,7 +30,11 @@ export default function Signup() {
   };
   const signup = () => {
     createUserWithEmailAndPassword(auth, email, password);
-    addUserInFirebase()
+    addUserInFirebase();
+    setIsAccepted(true);
+    setTimeout(() => {
+      router.push("/signin");
+    }, 3500); // 2500 milisegundos = 2.5 segundos
   };
   return (
     <>
@@ -44,7 +51,8 @@ export default function Signup() {
           </h2>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        {isAccepted === false && <>
+          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <div className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
@@ -127,7 +135,15 @@ export default function Signup() {
               </button>
             </div>
           </div>
-        </div>
+        </div></>}
+        {isAccepted && <>
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
+            Cuenta creada con éxito
+          </h2>
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
+            Redireccionando al inicio de sesión...
+          </h2>
+        </>}
       </div>
     </>
   )
