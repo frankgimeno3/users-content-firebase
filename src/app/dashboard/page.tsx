@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [userData, setUserData] = useState("")
 
   useEffect(() => {
+    console.log(session)
       if (session?.data?.user?.email) {
         setUserData(session.data.user.email);
       } else {setUserData("Usuario")}

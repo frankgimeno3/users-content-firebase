@@ -3,19 +3,36 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { auth } from '../firebase';
- export default function Signup() {
+import { collection, addDoc, getDoc, query, onSnapshot, deleteDoc, doc, } from 'firebase/firestore';
+import { db } from '../firebase';
+
+
+export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordAgain, setPasswordAgain] = useState('');
+  const [type, setType] = useState('');
 
+  const handleUserTypeChange = (e: any) => {
+    setType(e.target.value);
+  };
+
+  const addUserInFirebase = async ( ) => {
+     if (email !== '' && password !== '' && passwordAgain !== '') {
+      await addDoc(collection(db, 'users'), {
+        email: email.trim(),
+        type: type,
+       });
+     }
+  };
   const signup = () => {
     createUserWithEmailAndPassword(auth, email, password);
+    addUserInFirebase()
   };
-  
   return (
     <>
- 
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             className="mx-auto h-10 w-auto"
@@ -23,7 +40,7 @@ import { auth } from '../firebase';
             alt="Your Company"
           />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
-           Crear una cuenta
+            Crear una cuenta
           </h2>
         </div>
 
@@ -45,7 +62,24 @@ import { auth } from '../firebase';
                 />
               </div>
             </div>
-
+            <div>
+              <label htmlFor="userType" className="block text-sm font-medium leading-6 text-white">
+                User Type
+              </label>
+              <div className="mt-2">
+                <select
+                  id="userType"
+                  name="userType"
+                  value={type}
+                  onChange={handleUserTypeChange}
+                  required
+                  className="bg-transparent block w-full rounded-md border-0   py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                >
+                  <option value="profesional" className='bg-gray-100 text-black'>Profesional</option>
+                  <option value="empresa" className='bg-gray-100 text-black'>Empresa</option>
+                </select>
+              </div>
+            </div>
             <div>
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-white">
